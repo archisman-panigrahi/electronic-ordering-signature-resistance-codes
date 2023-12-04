@@ -242,10 +242,6 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
         end
         #plt4 = scatter(coordinates_x,coordinates_y, zcolor=Fermi_occupation_new, markersize=8, reuse=true, aspect_ratio=:equal, title=string("Intermediate Mean Field Fermi occupation at iter = ", string(iter)))
 
-        ###Code for printing electron number in the pockets goes here
-        #####
-        #####
-
         if maximum(abs.(Fermi_occupation_new - Fermi_occupation_intermediate)) < 0.0005
             this_variable_breaks_while_loop += 1;
         end
@@ -254,6 +250,9 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
         iter += 1
 
         if(iter > 400)
+        ## At low temperature, sometimes it cannot find the exact chemical potential so that the electron number is equal to the initial electron number.
+        ## Despite that, the electron number is very close, and the solution is close to the actual self-consistent solution.
+        ## We break the loop at this point
             println("Breaking due to getting stuck")
             break
         end
