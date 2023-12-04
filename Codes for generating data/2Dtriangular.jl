@@ -82,21 +82,6 @@ function second_derivative_x(f::Vector{Float64},coordinates_x::Vector{Float64},c
     return x_second_derivative
 end
 
-function check_x_second_derivative(n::Int64,a::Float64)
-    close("all")
-    nSites = 3*n^2 - 3*n + 1
-    coordinates_x, coordinates_y = generate_triangular_lattice_on_a_hexagon(n,a);
-
-    plt1=scatter(coordinates_x,coordinates_y, legend=false, aspect_ratio=:equal)
-
-    fFunction = exp.(-((coordinates_x - sum(coordinates_x) * ones(nSites)/nSites).^2 +(coordinates_y - sum(coordinates_y)* ones(nSites)/nSites).^2)/3)
-
-    plt2 = scatter(coordinates_x,coordinates_y, fFunction, markersize=10, reuse=false,aspect_ratio=:equal)
-    x_second_derivative = second_derivative_x(fFunction,coordinates_x,coordinates_y,a);
-    plt3 = scatter(coordinates_x,coordinates_y, x_second_derivative, markersize=10, reuse=false,aspect_ratio=:equal, title="Numerical second derivative")
-    plt3 = scatter!(coordinates_x,coordinates_y, ((4/9)*(coordinates_x - sum(coordinates_x) * ones(nSites)/nSites).^2 - (2/3)*ones(nSites)) .* exp.(-((coordinates_x - sum(coordinates_x) * ones(nSites)/nSites).^2 +(coordinates_y - sum(coordinates_y)* ones(nSites)/nSites).^2)/3), markersize=6, reuse=true,aspect_ratio=:equal)
-end
-
 function dipole_moment(n::Int64, fermi_function::Vector{Float64},coordinates_x::Vector{Float64},coordinates_y::Vector{Float64})
     nSites =  3*n^2 - 3*n + 1
     center_index = Int((nSites - (2*n-1))/2 + n)
@@ -135,7 +120,7 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
     plt1=scatter!(array1,array2, markersize=8, color=:red)
     plt1=scatter!([coordinates_x[center_index]],[coordinates_y[center_index]], markersize=7, color=:green)
     display(#plt1)
-    conductivity_at_first_iteration = 0;
+    curvature_at_first_iteration = 0;
     for ii = 1:nSites
         E_k[ii] = kinetic_energy(coordinates_x[ii],coordinates_y[ii],coordinates_x[triangular_1_index],coordinates_y[triangular_1_index],coordinates_x[triangular_2_index],coordinates_y[triangular_2_index],coordinates_x[triangular_3_index],coordinates_y[triangular_3_index],1.0,rad_pockets)
     end
@@ -236,7 +221,7 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
         if(iter == 1)
             #pltiter1 = scatter(coordinates_x,coordinates_y, (E_k - lambda_k), markersize=6, reuse=false, aspect_ratio=:equal, title=string("iter=1 bandstructure"))
             #pltiter1 = scatter!(coordinates_x,coordinates_y, muTrial*ones(nSites), markersize=1, reuse=true, aspect_ratio=:equal, title=string("iter=1 bandstructure"))
-            conductivity_at_first_iteration = sum(lattice_laplacian_triangular(E_k-lambda_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation_new)
+            curvature_at_first_iteration = sum(lattice_laplacian_triangular(E_k-lambda_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation_new)
             #pltdummy = scatter(coordinates_x,coordinates_y, reuse=false, aspect_ratio=:equal, title=string("dummy plot to be replaced"))
 
         end
@@ -265,22 +250,15 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
 
     plt7 = scatter(coordinates_x,coordinates_y, zcolor=Fermi_occupation_new, markersize=8, reuse=false, aspect_ratio=:equal, title=string("Final Occupation function"))
 
-    println("Initial_conductivity = ", sum(lattice_laplacian_triangular(E_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation))
-    println("1st iteration conductivity = ", conductivity_at_first_iteration)
-    final_conductivity = sum(lattice_laplacian_triangular(E_k-lambda_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation_new)
+    println("Initial_curvature = ", sum(lattice_laplacian_triangular(E_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation))
+    println("1st iteration curvature = ", curvature_at_first_iteration)
+    final_curvature = sum(lattice_laplacian_triangular(E_k-lambda_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation_new)
 
-    ##longitudinal_conductivity sigma_xx is parallel to the polarization direction
-    longitudinal_conductivity = sum(second_derivative_x(E_k-lambda_k,coordinates_x,coordinates_y,1.0).*Fermi_occupation_new)
-    ##transeverse conductivity sigma_yy is perpendicular to the polarization direction
-    transverse_conductivity = final_conductivity - longitudinal_conductivity
 
-    println("Final_laplacian_conductivity = ", final_conductivity)
+    println("Final_laplacian_curvature = ", final_curvature)
     println("-----------")
-    println("Final_average_curvature = ", final_conductivity/sum(Fermi_occupation_new))
+    println("Final_average_curvature = ", final_curvature/sum(Fermi_occupation_new))
     println("-----------")
-
-    println("Longitudinal conductivity = ", longitudinal_conductivity)
-    println("Transverse conductivity = ", transverse_conductivity)
 
     U = sum((E_k-0.5*lambda_k).*Fermi_occupation_new)
     println("U=",U)
@@ -323,8 +301,8 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
 
     println("exchange/kinetic = ", abs((U-Total_E_kinetic)/Total_E_kinetic))
     ### Save to file
-    #[n,dist_pockets_from_center,rad_pockets,V,muInit,mu_Final,polarized,beta,q_0,Total_energy,S,Free_energy,Total_Energy_kinetic, total_electrons, final_conductivity, scaled_dipole_moment]
-    dataToSave = [n,dist_pockets_from_center,rad_pockets,V,mu,muTrial,polarized,beta,q_0,U,S,U-(S/beta),Total_E_kinetic, sum(Fermi_occupation_new), final_conductivity, scaled_dipole_moment, longitudinal_conductivity, transverse_conductivity]
+    #[n,dist_pockets_from_center,rad_pockets,V,muInit,mu_Final,polarized,beta,q_0,Total_energy,S,Free_energy,Total_Energy_kinetic, total_electrons, final_curvature, scaled_dipole_moment]
+    dataToSave = [n,dist_pockets_from_center,rad_pockets,V,mu,muTrial,polarized,beta,q_0,U,S,U-(S/beta),Total_E_kinetic, sum(Fermi_occupation_new), final_curvature, scaled_dipole_moment, longitudinal_curvature, transverse_curvature]
     io = open(outputfilename,"a")
     writedlm(io,dataToSave',",")
     close(io)
