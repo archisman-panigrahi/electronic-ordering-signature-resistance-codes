@@ -1,3 +1,5 @@
+## This file generates a triangular lattice, which are utilized in 2D_triangular_Model2.jl
+
 #using Plots
 
 function generate_triangular_lattice_on_a_square(Lx::Int64,Ly::Int64,a::Float64) 
