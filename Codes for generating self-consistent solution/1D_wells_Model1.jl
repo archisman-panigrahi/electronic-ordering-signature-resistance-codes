@@ -178,6 +178,7 @@ function mainfunction(Lx::Int64, V::Float64, mu::Float64, polarized::Float64, Te
 
     println("'Fermi Energy' from bottom = ", muTrial - minimum(E_k-lambda_k))
     println("Temperature = ",1/beta)
+    println("Final chemical potential = ", muTrial)
 
     println("nRight = ", sum(Fermi_occupation_new[Int(round(Lx/2)):Lx]))
     println("nLeft = ", sum(Fermi_occupation_new[1:Int(round(Lx/2))]))
