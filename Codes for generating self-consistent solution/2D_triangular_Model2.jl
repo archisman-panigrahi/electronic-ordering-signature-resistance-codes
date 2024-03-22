@@ -119,7 +119,7 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
     plt1=scatter(coordinates_x,coordinates_y, legend=false, aspect_ratio=:equal)
     plt1=scatter!(array1,array2, markersize=8, color=:red)
     plt1=scatter!([coordinates_x[center_index]],[coordinates_y[center_index]], markersize=7, color=:green)
-    display(#plt1)
+    display(plt1)
     curvature_at_first_iteration = 0;
     for ii = 1:nSites
         E_k[ii] = kinetic_energy(coordinates_x[ii],coordinates_y[ii],coordinates_x[triangular_1_index],coordinates_y[triangular_1_index],coordinates_x[triangular_2_index],coordinates_y[triangular_2_index],coordinates_x[triangular_3_index],coordinates_y[triangular_3_index],1.0,rad_pockets)
@@ -302,7 +302,7 @@ function mainfunction(n::Int64, dist_pockets_from_center::Int64, rad_pockets::Fl
     println("exchange/kinetic = ", abs((U-Total_E_kinetic)/Total_E_kinetic))
     ### Save to file
     #[n,dist_pockets_from_center,rad_pockets,V,muInit,mu_Final,polarized,beta,q_0,Total_energy,S,Free_energy,Total_Energy_kinetic, total_electrons, final_curvature, scaled_dipole_moment]
-    dataToSave = [n,dist_pockets_from_center,rad_pockets,V,mu,muTrial,polarized,beta,q_0,U,S,U-(S/beta),Total_E_kinetic, sum(Fermi_occupation_new), final_curvature, scaled_dipole_moment, longitudinal_curvature, transverse_curvature]
+    dataToSave = [n,dist_pockets_from_center,rad_pockets,V,mu,muTrial,polarized,beta,q_0,U,S,U-(S/beta),Total_E_kinetic, sum(Fermi_occupation_new), final_curvature, scaled_dipole_moment]
     io = open(outputfilename,"a")
     writedlm(io,dataToSave',",")
     close(io)
