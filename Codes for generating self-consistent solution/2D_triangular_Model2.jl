@@ -1,5 +1,8 @@
 ###Example
 ### @time mainfunction(10,5,2.0,0.4,-2.0,2.0,50.0,1.5,"data2DTriangular_1pocket_initial.csv")
+println("How to run:\n mainfunction(n, dist_pockets_from_center, rad_pockets,V, mu, polarized, beta, q_0, outputfilename)")
+println("For example")
+println("@time mainfunction(24, 12, 4.0, 0.01, -0.4992, 1.0, 1/0.04, 6.0, \"data2DTriangular_1pocket_initial.csv\")")
 
 using Plots
 Plots.default(show = true)

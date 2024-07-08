@@ -1,6 +1,6 @@
 println("How to run:\n mainfunction(Lx, V, mu, polarized, Temp, q_0)")
 println("For example")
-println("@time mainfunction(1001,0.01,0.2,1.0,0.1,0.4)")
+println("@time mainfunction(1001,0.004,0.3018,1.0,0.04,0.2)")
 
 using Plots
 Plots.default(show = true)
@@ -195,7 +195,7 @@ function mainfunction(Lx::Int64, V::Float64, mu::Float64, polarized::Float64, Te
     ### Save to file
     #[Lx,V,muInitial,muFinal,polarized,beta,q_0,U,S,Free_Energy,nRight,nLeft,(nRight-nLeft)/nTotal,Final_conductivity,total_kinetic,nTotal]
     dataToSave = [Lx,V,mu,muTrial,polarized,beta,q_0,U,S,U-(S/beta),sum(Fermi_occupation_new[Int(round(Lx/2)):Lx]),sum(Fermi_occupation_new[1:Int(round(Lx/2))]),(sum(Fermi_occupation_new[Int(round(Lx/2)):Lx]) - sum(Fermi_occupation_new[1:Int(round(Lx/2))]))/sum(Fermi_occupation_new),sum(lattice_laplacian(E_k-lambda_k,distgrid).*Fermi_occupation_new),Total_E_kinetic,n_occupied]
-    io = open("dataTvsN2pocketT=0.0142.csv","a")
+    io = open("data_output_filename.csv","a")
     writedlm(io,dataToSave',",")
     close(io)
 end
