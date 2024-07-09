@@ -5,4 +5,4 @@
  
  The codes for obtaining the plots are in the directory `Codes for plotting`. You will need [Mathematica](https://www.wolfram.com/mathematica/) and [IJulia](https://juliapackages.com/p/ijulia) (a Julia kernel for Jupyter notebooks) to run them.
  
- The data files for average curvature obtained by running these codes are stores in `data`, in OpenDocument Spreadsheet (.ods) format. 
+ The data files for average curvature obtained by running these codes are stored in OpenDocument Spreadsheet (.ods) format in the directory `data`. 
